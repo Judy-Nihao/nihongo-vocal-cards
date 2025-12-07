@@ -1,0 +1,5 @@
+{
+  "name": "TravelNote - Japan Travel Helper",
+  "description": "A React application for generating and managing Japanese travel vocabulary cards with TTS support and Gemini AI integration.",
+  "requestFramePermissions": []
+}
