@@ -1,35 +1,69 @@
-
 import { GoogleGenAI, Type, Schema, Modality } from "@google/genai";
 import { GeminiResponse } from "../types";
 import { TEXT } from "../utils/common";
 
 // Initialize the client. API key must be in environment variables.
-const apiKey = process.env.API_KEY || ''; 
+// Use Vite's `import.meta.env.VITE_API_KEY` in the browser. Guard `process` access
+// so this file can be loaded in a browser environment without ReferenceError.
+const apiKey =
+  (typeof process !== "undefined" && process?.env?.API_KEY) ||
+  (import.meta.env as any).VITE_API_KEY ||
+  "";
 const ai = new GoogleGenAI({ apiKey });
 
-const MODEL_NAME = 'gemini-2.5-flash';
-const TTS_MODEL_NAME = 'gemini-2.5-flash-preview-tts';
+const MODEL_NAME = "gemini-2.5-flash";
+const TTS_MODEL_NAME = "gemini-2.5-flash-preview-tts";
 
 // Shared Schema parts
 const BASE_SCHEMA_PROPERTIES = {
-    japaneseKanji: { type: Type.STRING, description: "The complete, natural Japanese sentence in Kanji and Kana (plain text)." },
-    japaneseHiragana: { type: Type.STRING, description: "The Japanese sentence purely in Hiragana for TTS playback." },
-    romaji: { type: Type.STRING, description: "The Romanized version of the Japanese sentence." },
-    japaneseFurigana: { type: Type.STRING, description: "The Japanese sentence formatted with HTML <ruby> and <rt> tags for furigana (Kanji only). EXAMPLE: <ruby>日<rt>に</rt></ruby><ruby>本<rt>ほん</rt></ruby>" },
-    simplifiedChineseTranslation: { type: Type.STRING, description: "A short summary (max 10 characters) of the sentence." },
-    chineseTranslation: { type: Type.STRING, description: "The Traditional Chinese translation of the Japanese sentence." },
+  japaneseKanji: {
+    type: Type.STRING,
+    description:
+      "The complete, natural Japanese sentence in Kanji and Kana (plain text).",
+  },
+  japaneseHiragana: {
+    type: Type.STRING,
+    description: "The Japanese sentence purely in Hiragana for TTS playback.",
+  },
+  romaji: {
+    type: Type.STRING,
+    description: "The Romanized version of the Japanese sentence.",
+  },
+  japaneseFurigana: {
+    type: Type.STRING,
+    description:
+      "The Japanese sentence formatted with HTML <ruby> and <rt> tags for furigana (Kanji only). EXAMPLE: <ruby>日<rt>に</rt></ruby><ruby>本<rt>ほん</rt></ruby>",
+  },
+  simplifiedChineseTranslation: {
+    type: Type.STRING,
+    description: "A short summary (max 10 characters) of the sentence.",
+  },
+  chineseTranslation: {
+    type: Type.STRING,
+    description:
+      "The Traditional Chinese translation of the Japanese sentence.",
+  },
 };
 
 const RESPONSE_SCHEMA: Schema = {
   type: Type.OBJECT,
   properties: {
     ...BASE_SCHEMA_PROPERTIES,
-    grammarFeedback: { type: Type.STRING, description: "Optional." } 
+    grammarFeedback: { type: Type.STRING, description: "Optional." },
   },
-  required: ["japaneseKanji", "japaneseHiragana", "romaji", "japaneseFurigana", "simplifiedChineseTranslation", "chineseTranslation"]
+  required: [
+    "japaneseKanji",
+    "japaneseHiragana",
+    "romaji",
+    "japaneseFurigana",
+    "simplifiedChineseTranslation",
+    "chineseTranslation",
+  ],
 };
 
-export const generateCardFromInput = async (userInput: string): Promise<GeminiResponse> => {
+export const generateCardFromInput = async (
+  userInput: string
+): Promise<GeminiResponse> => {
   if (!apiKey) throw new Error(TEXT.ERRORS.MISSING_API_KEY);
 
   const userQuery = `
@@ -41,7 +75,8 @@ export const generateCardFromInput = async (userInput: string): Promise<GeminiRe
     Do NOT use parentheses like 漢字(かんじ). YOU MUST USE RUBY TAGS.
   `;
 
-  const systemPrompt = "You are a Japanese language expert. Your output must be valid JSON. Ensure 'japaneseFurigana' contains valid HTML ruby tags for ALL Kanji characters.";
+  const systemPrompt =
+    "You are a Japanese language expert. Your output must be valid JSON. Ensure 'japaneseFurigana' contains valid HTML ruby tags for ALL Kanji characters.";
 
   const response = await ai.models.generateContent({
     model: MODEL_NAME,
@@ -49,15 +84,18 @@ export const generateCardFromInput = async (userInput: string): Promise<GeminiRe
     config: {
       systemInstruction: systemPrompt,
       responseMimeType: "application/json",
-      responseSchema: RESPONSE_SCHEMA
-    }
+      responseSchema: RESPONSE_SCHEMA,
+    },
   });
 
   if (!response.text) throw new Error("No data returned from Gemini.");
   return JSON.parse(response.text) as GeminiResponse;
 };
 
-export const generateGrammarFeedback = async (originalInput: string, currentKanji: string): Promise<string> => {
+export const generateGrammarFeedback = async (
+  originalInput: string,
+  currentKanji: string
+): Promise<string> => {
   if (!apiKey) throw new Error(TEXT.ERRORS.MISSING_API_KEY);
 
   const userQuery = `
@@ -76,9 +114,12 @@ export const generateGrammarFeedback = async (originalInput: string, currentKanj
   const feedbackSchema: Schema = {
     type: Type.OBJECT,
     properties: {
-      grammarFeedback: { type: Type.STRING, description: "Constructive grammar feedback in Traditional Chinese." }
+      grammarFeedback: {
+        type: Type.STRING,
+        description: "Constructive grammar feedback in Traditional Chinese.",
+      },
     },
-    required: ["grammarFeedback"]
+    required: ["grammarFeedback"],
   };
 
   const response = await ai.models.generateContent({
@@ -86,8 +127,8 @@ export const generateGrammarFeedback = async (originalInput: string, currentKanj
     contents: userQuery,
     config: {
       responseMimeType: "application/json",
-      responseSchema: feedbackSchema
-    }
+      responseSchema: feedbackSchema,
+    },
   });
 
   if (!response.text) throw new Error("No feedback returned.");
@@ -96,9 +137,9 @@ export const generateGrammarFeedback = async (originalInput: string, currentKanj
 };
 
 export const generateImprovedCardData = async (
-  title: string, 
-  kanji: string, 
-  grammarFeedback: string, 
+  title: string,
+  kanji: string,
+  grammarFeedback: string,
   originalInput: string
 ): Promise<GeminiResponse> => {
   if (!apiKey) throw new Error(TEXT.ERRORS.MISSING_API_KEY);
@@ -113,7 +154,8 @@ export const generateImprovedCardData = async (
     3. Provide the Traditional Chinese translation for this IMPROVED Japanese expression.
   `;
 
-  const systemPrompt = "You are a Japanese language expert. Output valid JSON. Ensure 'japaneseFurigana' contains valid HTML ruby tags for ALL Kanji.";
+  const systemPrompt =
+    "You are a Japanese language expert. Output valid JSON. Ensure 'japaneseFurigana' contains valid HTML ruby tags for ALL Kanji.";
 
   const response = await ai.models.generateContent({
     model: MODEL_NAME,
@@ -121,8 +163,8 @@ export const generateImprovedCardData = async (
     config: {
       systemInstruction: systemPrompt,
       responseMimeType: "application/json",
-      responseSchema: RESPONSE_SCHEMA
-    }
+      responseSchema: RESPONSE_SCHEMA,
+    },
   });
 
   if (!response.text) throw new Error("No data returned from Gemini.");
@@ -130,24 +172,28 @@ export const generateImprovedCardData = async (
 };
 
 // --- Text to Speech ---
-export const generateSpeech = async (text: string, voiceName: string): Promise<string> => {
-    if (!apiKey) throw new Error(TEXT.ERRORS.MISSING_API_KEY);
+export const generateSpeech = async (
+  text: string,
+  voiceName: string
+): Promise<string> => {
+  if (!apiKey) throw new Error(TEXT.ERRORS.MISSING_API_KEY);
 
-    const response = await ai.models.generateContent({
-      model: TTS_MODEL_NAME,
-      contents: [{ parts: [{ text }] }],
-      config: {
-        responseModalities: [Modality.AUDIO],
-        speechConfig: {
-          voiceConfig: {
-            prebuiltVoiceConfig: { voiceName }
-          }
-        }
-      }
-    });
+  const response = await ai.models.generateContent({
+    model: TTS_MODEL_NAME,
+    contents: [{ parts: [{ text }] }],
+    config: {
+      responseModalities: [Modality.AUDIO],
+      speechConfig: {
+        voiceConfig: {
+          prebuiltVoiceConfig: { voiceName },
+        },
+      },
+    },
+  });
 
-    const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-    if (!base64Audio) throw new Error("No audio data returned from Gemini.");
-    
-    return base64Audio;
+  const base64Audio =
+    response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+  if (!base64Audio) throw new Error("No audio data returned from Gemini.");
+
+  return base64Audio;
 };
