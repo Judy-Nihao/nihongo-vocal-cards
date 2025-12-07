@@ -7,7 +7,7 @@ import { TEXT } from "../utils/common";
 // so this file can be loaded in a browser environment without ReferenceError.
 const apiKey =
   (typeof process !== "undefined" && process?.env?.API_KEY) ||
-  (import.meta.env as any).VITE_API_KEY ||
+  (import.meta as any).env?.VITE_API_KEY ||
   "";
 const ai = new GoogleGenAI({ apiKey });
 
