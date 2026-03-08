@@ -1,6 +1,6 @@
 # 日語學習卡片應用 / Japanese Vocabulary Learning Cards
 
-> 一個使用 Google Gemini API 與 Text-to-Speech 的日語學習工具，支援平假名標注與自動卡片生成。透過 Vercel 無伺服器架構安全管理 API 密鑰。  
+> 一個使用 Google Gemini API 與 Text-to-Speech 的日語學習工具，支援平假名標注與自動卡片生成。透過 Vercel Serverless 架構安全管理 API 密鑰。  
 > A Japanese vocabulary learning tool with Google Gemini API and Text-to-Speech integration. Features automatic furigana annotations and flashcard generation, with secure API key management via Vercel serverless architecture.
 
 🌐 **Live Demo**: [https://nihongo-vocal-cards.vercel.app/](https://nihongo-vocal-cards.vercel.app/)
@@ -222,7 +222,6 @@ This project began as **vibe coding** — rapid prototyping in Google AI Studio 
 ✅ **API Key Security** - Frontend has zero access to credentials
 ✅ **Serverless Deployment** - Vercel automatically manages infrastructure
 ✅ **User Privacy** - Card data stored only locally in browser
-✅ **Serverless Management** - No need to provision or maintain servers; Vercel handles all infrastructure automatically
 
 ---
 
@@ -311,50 +310,3 @@ nihongo-vocal-cards/
 ├── tsconfig.json
 └── package.json
 ```
-
----
-
-## 🌍 How to Replicate This Project
-
-For developers interested in building similar applications.
-
-### Steps
-
-**1. Clone Repository**
-
-```bash
-git clone https://github.com/Judy-Nihao/nihongo-vocal-cards.git
-cd nihongo-vocal-cards
-npm install
-```
-
-**2. Obtain Google Gemini API Key**
-
-- Visit [Google AI Studio](https://aistudio.google.com)
-- Create a new API key
-
-**3. Local Development**
-
-```bash
-vercel env pull          # Pull environment variables from Vercel
-vercel dev              # Start local development server
-```
-
-**4. Deploy to Vercel**
-
-- Push repository to GitHub
-- Import repository in Vercel dashboard
-- Set environment variable `GOOGLE_AI_API_KEY`
-- Auto-deploys on every push
-
-**5. Customize Your Implementation**
-
-- Modify React components in `src/`
-- Adjust API prompts in `api/generate.js`
-- Reference the "API Key Security Management" section for best practices
-
----
-
-## 📄 License
-
-This project is for personal use and reference.
