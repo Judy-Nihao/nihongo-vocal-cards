@@ -13,10 +13,8 @@ dist-ssr
 *.local
 
 # Sensitive files and Environment
-.env              
-.env.development.local
-.env.test.local
-.env.production.local
+.env
+.env*.local
 
 # Editor directories and files
 .vscode/*
@@ -29,4 +27,3 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
-.env*.local
