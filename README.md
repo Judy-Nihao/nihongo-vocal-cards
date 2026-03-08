@@ -5,6 +5,8 @@
 
 🌐 **Live Demo**: [https://nihongo-vocal-cards.vercel.app/](https://nihongo-vocal-cards.vercel.app/)
 
+<img width="1196" height="1018" alt="截圖 2026-03-08 晚上9 16 50" src="https://github.com/user-attachments/assets/1c6dd814-4d98-48cd-9b7c-9c941122ffb8" />
+
 ---
 
 ## 📖 目錄 / Table of Contents
@@ -142,7 +144,7 @@ export default async function handler(req, res) {
 
 1. **環境變數管理** - 密鑰存儲在 Vercel 環境變數，永不進入程式碼
 2. **伺服器端驗證** - 後端驗證所有請求參數
-3. **無日誌記錄** - Vercel 不記錄敏感環境變數
+3. **避免日誌洩漏** - API Key 僅透過環境變數存取，不寫入任何日誌或程式碼
 4. **請求方法** - 使用 POST 防止 URL 中洩露參數
 
 ### 部署安全檢查清單
@@ -302,7 +304,7 @@ Frontend Request → Vercel Backend → Google API
 
 1. **Environment Variables** - API keys stored in Vercel environment variables, never hardcoded
 2. **Server-side Validation** - Backend validates all request parameters before processing
-3. **No Logging** - Vercel doesn't record sensitive environment variables
+3. **No Credential Logging** - API keys are accessed only via environment variables and never written to logs or source code
 4. **POST Method** - Uses POST requests to prevent parameter leakage in URLs
 
 ### Deployment Security Checklist
