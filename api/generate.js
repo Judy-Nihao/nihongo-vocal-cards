@@ -91,7 +91,17 @@ async function handleGenerateCard(req, res) {
     return res.status(200).json(JSON.parse(response.text));
   } catch (error) {
     console.error("Generate card error:", error);
-    return res.status(500).json({ error: "Failed to generate card" });
+    if (error.status === 429) {
+      return res.status(429).json({
+        error: "API quota has been exhausted",
+        detail:
+          "Your daily Gemini API quota has been exhausted. Please try again tomorrow.",
+      });
+    }
+    return res.status(500).json({
+      error: "Failed to generate card",
+      detail: error.message,
+    });
   }
 }
 
@@ -147,9 +157,17 @@ async function handleGrammarFeedback(req, res) {
     return res.status(200).json({ grammarFeedback: parsed.grammarFeedback });
   } catch (error) {
     console.error("Grammar feedback error:", error);
-    return res
-      .status(500)
-      .json({ error: "Failed to generate grammar feedback" });
+    if (error.status === 429) {
+      return res.status(429).json({
+        error: "API quota has been exhausted",
+        detail:
+          "Your daily Gemini API quota has been exhausted. Please try again tomorrow.",
+      });
+    }
+    return res.status(500).json({
+      error: "Failed to generate grammar feedback",
+      detail: error.message,
+    });
   }
 }
 
@@ -194,7 +212,17 @@ async function handleImproveCard(req, res) {
     return res.status(200).json(JSON.parse(response.text));
   } catch (error) {
     console.error("Improve card error:", error);
-    return res.status(500).json({ error: "Failed to improve card" });
+    if (error.status === 429) {
+      return res.status(429).json({
+        error: "API quota has been exhausted",
+        detail:
+          "Your daily Gemini API quota has been exhausted. Please try again tomorrow.",
+      });
+    }
+    return res.status(500).json({
+      error: "Failed to improve card",
+      detail: error.message,
+    });
   }
 }
 
@@ -231,7 +259,17 @@ async function handleGenerateSpeech(req, res) {
     return res.status(200).json({ audio: base64Audio });
   } catch (error) {
     console.error("Generate speech error:", error);
-    return res.status(500).json({ error: "Failed to generate speech" });
+    if (error.status === 429) {
+      return res.status(429).json({
+        error: "API quota has been exhausted",
+        detail:
+          "Your daily Gemini API quota has been exhausted. Please try again tomorrow.",
+      });
+    }
+    return res.status(500).json({
+      error: "Failed to generate speech",
+      detail: error.message,
+    });
   }
 }
 
