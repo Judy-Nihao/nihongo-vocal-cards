@@ -89,6 +89,14 @@
 
 ---
 
+> ⚠️ **免費方案限制**：本專案使用 Gemini API Free Tier，`gemini-2.5-flash-tts` 每日請求上限為 10 次。超過後語音功能將暫停服務，待隔日額度重置後恢復。
+
+<img width="2119" height="609" alt="Image" src="https://github.com/user-attachments/assets/9b39b376-ee20-4641-9ebf-65cf0048df26"/>
+
+<img width="928" height="285" alt="Image" src="https://github.com/user-attachments/assets/d6911516-eb68-4f03-b43c-515cdda965e8"/>
+
+<img width="938" height="495" alt="Image" src="https://github.com/user-attachments/assets/72110828-89a8-4976-838f-7447ba573e82"/>
+
 ## 🔐 API Key 安全性：核心工程挑戰
 
 ### 問題：直接在前端調用 API 的風險
@@ -151,12 +159,15 @@ export default async function handler(req, res) {
 
 ```
 nihongo-vocal-cards/
-├── api/generate.js              # Vercel API 端點 (4 個處理器)
+├── api/
+│   └── generate.js              # [後端] Vercel Serverless Function，呼叫 Google API
 ├── src/
-│   ├── services/geminiService.ts # 前端 API 服務層
-│   ├── components/              # React 元件
-│   ├── hooks/useTTS.ts          # 語音播放邏輯
-│   └── App.tsx                  # 主應用
+│   ├── services/
+│   │   └── geminiService.ts     # [中介層] 封裝 fetch 請求，串接前後端
+│   ├── components/              # [前端] React UI 元件
+│   ├── hooks/
+│   │   └── useTTS.ts            # [前端] 語音播放邏輯，呼叫 geminiService
+│   └── App.tsx                  # [前端] 主應用程式
 ├── vite.config.ts
 ├── tsconfig.json
 └── package.json
@@ -238,6 +249,14 @@ All requests route through a single endpoint `/api/generate`:
 
 ---
 
+> ⚠️ **Free Tier Limitation**: This project uses the Gemini API Free Tier. The `gemini-2.5-flash-tts` model has a daily limit of 10 requests. Once exceeded, the Text-to-Speech feature will be unavailable until the quota resets the following day.
+
+<img width="2119" height="609" alt="Image" src="https://github.com/user-attachments/assets/9b39b376-ee20-4641-9ebf-65cf0048df26"/>
+
+<img width="928" height="285" alt="Image" src="https://github.com/user-attachments/assets/d6911516-eb68-4f03-b43c-515cdda965e8"/>
+
+<img width="938" height="495" alt="Image" src="https://github.com/user-attachments/assets/72110828-89a8-4976-838f-7447ba573e82"/>
+
 ## 🔐 API Key Security Management: Core Engineering Challenge
 
 ### The Problem: Direct Frontend API Calls
@@ -300,12 +319,15 @@ Frontend Request → Vercel Backend → Google API
 
 ```
 nihongo-vocal-cards/
-├── api/generate.js              # Vercel API endpoint (4 handlers)
+├── api/
+│   └── generate.js              # [Backend] Vercel Serverless Function — calls Google API
 ├── src/
-│   ├── services/geminiService.ts # Frontend API service
-│   ├── components/              # React components
-│   ├── hooks/useTTS.ts          # Speech playback logic
-│   └── App.tsx                  # Main app
+│   ├── services/
+│   │   └── geminiService.ts     # [Service Layer] Wraps fetch requests, bridges frontend and backend
+│   ├── components/              # [Frontend] React UI components
+│   ├── hooks/
+│   │   └── useTTS.ts            # [Frontend] Speech playback logic, calls geminiService
+│   └── App.tsx                  # [Frontend] Main application
 ├── vite.config.ts
 ├── tsconfig.json
 └── package.json
