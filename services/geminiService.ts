@@ -14,7 +14,7 @@ export const generateCardFromInput = async (
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || "Failed to generate card");
+    throw new Error(`${response.status}:${error.error || "Request failed"}`);
   }
 
   return response.json() as Promise<GeminiResponse>;
@@ -32,7 +32,7 @@ export const generateGrammarFeedback = async (
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || "Failed to generate grammar feedback");
+    throw new Error(`${response.status}:${error.error || "Request failed"}`);
   }
 
   const data = await response.json();
@@ -53,7 +53,7 @@ export const generateImprovedCardData = async (
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || "Failed to improve card");
+    throw new Error(`${response.status}:${error.error || "Request failed"}`);
   }
 
   return response.json() as Promise<GeminiResponse>;
@@ -72,7 +72,7 @@ export const generateSpeech = async (
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || "Failed to generate speech");
+    throw new Error(`${response.status}:${error.error || "Request failed"}`);
   }
 
   const data = await response.json();
